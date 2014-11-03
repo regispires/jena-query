@@ -2,11 +2,6 @@ PREFIX pref: <http://localhost:2020/vocab/>
 PREFIX owl:<http://www.w3.org/2002/07/owl#>
 PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>
 select * where{
-    service<http://virtuoso.mooo.com/peld-region/sparql>{
-        select ?id_reg where{
-            ?id_reg pref:peld_region_name_reg 'Paqueta' .
-        }
-    }
     {
         {
             service<http://virtuoso.mooo.com/peld-plankton/sparql>{
@@ -39,5 +34,26 @@ select * where{
                 }
             }
         }
+    }
+    service<http://virtuoso.mooo.com/peld-region/sparql>{
+        select ?id_reg where{
+            ?id_reg pref:peld_region_name_reg 'Paqueta' .
+        }
+    }
+    service<http://virtuoso.mooo.com/peld-taxon/sparql>{
+        select ?id_taxon ?name ?synonymous ?predator where{
+            ?id_taxon pref:peld_taxon_scientific_name  ?name  .
+            optional {
+                ?id_taxon pref:peld_taxon_is_synonimous_of ?id_synonymous .
+                ?id_synonymous pref:peld_taxon_popular_name  ?synonymous
+            }
+            optional {
+                ?chain       pref:peld_taxon_trophic_chain_id_prey_taxon     ?id_taxon .
+                ?chain       pref:peld_taxon_trophic_chain_id_predator_taxon ?id_predator .
+                ?id_predator pref:peld_taxon_scientific_name                 ?predator  .
+            }
+            
+        }
+        
     }
 }
